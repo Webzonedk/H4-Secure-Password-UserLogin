@@ -1,0 +1,44 @@
+<!-- <div class="row align-items-center full-height" *ngIf="!signedIn else signedInAlready"> -->
+    div class=<div class="container-fluid">
+        
+        <div class="row spacer"></div>
+        <div class="row align-items-center">
+        <div class="col-sm-3 col-lg-4">
+        </div>
+        
+        <div class="col-sm-6 col-lg-4">
+            
+            <form class="row g-5 m-5 login-form d-flex justify-content-center" [formGroup]="loginForm"
+            (ngSubmit)="signIn($event)">
+            <div class="col-12 form-group">
+                <label for="userName" class="form-label">Username*</label>
+                <input type="text" class="form-control" formControlName="userName" id="userName" autocomplete="on">
+            </div>
+                <div class="col-12 form-group">
+                    <label for="password" class="form-label">Password*</label>
+                    <input type="password" class="form-control" formControlName="password" id="password" autocomplete="on">
+                </div>
+                <div class="col-12 mb-4 form-group">
+                    <button [disabled]="!loginForm.valid" type="submit" class="btn btn-primary btn-lg">Login</button>
+                </div>
+                <div class="col-md-12" *ngIf="authFailed">
+                    <label style="color: red">Felterne skal udfyldes korrekt</label>
+                </div>
+                <div class="col-md-12" *ngIf="responseMessage !== ''">{{responseMessage}}</div>
+            </form>
+            
+        </div>
+        
+        <div class="col-sm-3 col-lg-4">
+        </div>
+        
+    </div>
+    
+</div>
+    <!-- <ng-template #signedInAlready>
+    
+        <h4>Sign In</h4>
+        <div>
+            You are already signed in!
+        </div>
+    </ng-template> -->
