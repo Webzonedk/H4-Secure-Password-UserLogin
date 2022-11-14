@@ -62,7 +62,7 @@ namespace API.Controllers
         public async Task<IActionResult> SignInAsync([FromBody] SignInRequest signInRequest)
         {
 
-            //Checking for bad loginattemts (Feedback need to provided to client)
+            //Checking for bad loginattemts (Feedback need to be provided to client)
 
             int allowedTries = 5;
             int counter = 0;
@@ -73,7 +73,7 @@ namespace API.Controllers
             }
             int triesLeft = allowedTries - counter;
             //--------------------------------------------------
-            //Cleaning old attempts is missing (Not finnished
+            //Cleaning old attempts is missing (Not finnished) So for now wrong attempts will be locked out forever :)
             //--------------------------------------------------
             var attemtsToRemove = badLoginAttempts.SingleOrDefault(x => x.TimeStamp.AddMinutes(5) < DateTime.Now);
 
@@ -97,31 +97,32 @@ namespace API.Controllers
                         badLoginAttempts.Add(badLogin);
                         return BadRequest(new Response(false, "Wrong UserName or password."));
                     }
-                    //byte[] oldPassword = user.PasswordHash;
+                     string oldPassword = Convert.ToBase64String(user.PasswordHash);
                     //byte[] oldSalt = user.PasswordSalt;
                     //User oldUser = user;
 
-                    //CreatePasswordHash(signInRequest.Password, out byte[] passwordHash, out byte[] passwordSalt);
+                    CreatePasswordHash(signInRequest.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-                    //user.PasswordSalt = passwordSalt;
-                    //_dBContext.UpdateUserSalt(user);
+                    user.PasswordHash = passwordHash;
+                    user.PasswordSalt = passwordSalt;
+                    _dBContext.UpdateUserSalt(user);
 
 
 
-                    ////Adding claims to the cookie
-                    //List<Claim> claims = new() { new Claim(type: ClaimTypes.Name, value: signInRequest.UserName) };
+                    //Adding claims to the cookie
+                    List<Claim> claims = new() { new Claim(type: ClaimTypes.Name, value: signInRequest.UserName) };
 
-                    //ClaimsIdentity identity = new(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    ClaimsIdentity identity = new(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                    //await HttpContext.SignInAsync(
-                    //    CookieAuthenticationDefaults.AuthenticationScheme,
-                    //    new ClaimsPrincipal(identity),
-                    //    new AuthenticationProperties
-                    //    {
-                    //        IsPersistent = true,
-                    //        AllowRefresh = true,
-                    //        ExpiresUtc = DateTimeOffset.UtcNow.AddHours(6)
-                    //    });
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(identity),
+                        new AuthenticationProperties
+                        {
+                            IsPersistent = true,
+                            AllowRefresh = true,
+                            ExpiresUtc = DateTimeOffset.UtcNow.AddHours(6)
+                        });
 
                     return Ok(new Response(true, "Signed in successfully"));
                 }
@@ -186,7 +187,7 @@ namespace API.Controllers
                 //passwordSalt = Encoding.ASCII.GetBytes(salt);
                 passwordSalt = hmac.Key;
                 //passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
             }
             catch (Exception)
             {
@@ -202,7 +203,7 @@ namespace API.Controllers
             try
             {
                 using HMACSHA512 hmac = new(passwordSalt);
-                byte[] computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                byte[] computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
                 return computedHash.SequenceEqual(passwordHash);
             }
             catch (Exception)

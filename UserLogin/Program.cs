@@ -26,24 +26,27 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSwaggerGen();
 
 
-//// Creating a cookie and send it with the header to the client as an authorization cookie
-//builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-//    .AddCookie(options =>
-//    {
+// Creating a cookie and send it with the header to the client as an authorization cookie
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
 
-//        options.Cookie.SameSite = SameSiteMode.None;
-//        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-//        //options.Cookie.SecurePolicy = CookieSecurePolicy.none;
-//        options.Cookie.HttpOnly = true;
-//        options.Cookie.IsEssential = true;
-//        options.Cookie.Path = "/";
-//        //options.Cookie.Domain = "";
-//        options.Events.OnRedirectToLogin = (context) =>
-//        {
-//            context.Response.StatusCode = 401;
-//            return Task.CompletedTask;
-//        };
-//    });
+        options.Cookie.SameSite = SameSiteMode.None;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        //options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.IsEssential = true;
+        options.Cookie.Path = "/";
+        //options.Cookie.Domain = ".localhost";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
+        options.SlidingExpiration = true;
+        options.Cookie.MaxAge = TimeSpan.FromMinutes(5);
+        options.Events.OnRedirectToLogin = (context) =>
+        {
+            context.Response.StatusCode = 401;
+            return Task.CompletedTask;
+        };
+    });
 
 
 var app = builder.Build();

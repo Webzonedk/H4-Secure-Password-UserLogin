@@ -37,7 +37,7 @@ DELIMITER //
 CREATE PROCEDURE updateUser(IN _userName VARCHAR(150), IN _passwordHash VARCHAR(500), IN _passwordSalt VARCHAR(500))
 BEGIN
 UPDATE myUser
-SET passwordSalt = _passwordSalt, _passwordHash = passwordHash
+SET passwordSalt = _passwordSalt, passwordHash = _passwordHash
 WHERE userName = _userName;
 END //
 

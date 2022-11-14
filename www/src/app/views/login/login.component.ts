@@ -64,7 +64,4 @@ export class LoginComponent implements OnInit {
       }
     });
   }
-//Added to push to git
-//Added to push to git
-
 }
