@@ -1,0 +1,43 @@
+
+DROP PROCEDURE IF EXISTS addUser;
+DELIMITER //
+CREATE PROCEDURE addUser(IN _userName VARCHAR(150), IN _passwordHash VARCHAR(500), IN _passwordSalt VARCHAR(500))
+BEGIN
+INSERT INTO myUser (userName, passwordHash, passwordSalt)
+VALUES (_userName, _passwordHash, _passwordSalt);
+END // 
+
+
+
+
+DROP PROCEDURE IF EXISTS getUser;
+DELIMITER //
+CREATE PROCEDURE getUser(IN _userName VARCHAR(150))
+BEGIN
+SELECT * FROM myUser
+WHERE userName = _userName;
+END //
+
+
+
+
+DROP PROCEDURE IF EXISTS authUser;
+DELIMITER //
+CREATE PROCEDURE authUser (IN _userName VARCHAR(150))
+BEGIN
+SELECT * FROM myUser
+WHERE userName = _userName;
+END //
+
+
+
+
+DROP PROCEDURE IF EXISTS updateUser;
+DELIMITER //
+CREATE PROCEDURE updateUser(IN _userName VARCHAR(150), IN _passwordHash VARCHAR(500), IN _passwordSalt VARCHAR(500))
+BEGIN
+UPDATE myUser
+SET passwordSalt = _passwordSalt, _passwordHash = passwordHash
+WHERE userName = _userName;
+END //
+

@@ -1,0 +1,7 @@
+CREATE TABLE adminUser(
+	userId INT NOT NULL AUTO_INCREMENT,
+	userName VARCHAR(150),
+	passwordHash VARBINARY(128),
+	passwordSalt VARBINARY(128),
+	PRIMARY KEY(userId)
+);
